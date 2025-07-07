@@ -78,12 +78,14 @@ with tab1:
     chart1 = alt.Chart(df_hawkmoth).mark_line(strokeWidth=2).encode(
         x=alt.X('Time Step:O', title='Time Step'),
         y=alt.Y('x:Q', title='x'),
-        color=alt.Color('Model:N', legend=alt.Legend(title="Model")),
+        color=alt.Color('Model:N',
+                        scale=alt.Scale(range=['#2E86AB', '#F24236']),
+                        legend=alt.Legend(title="Model")),
         strokeDash=alt.StrokeDash(
             'Model:N', scale=alt.Scale(range=[[1, 0], [5, 5]]))
     ).properties(
         width=600,
-        height=300,
+        height=400,
         title="Hawkmoth Effect"
     )
 
@@ -100,7 +102,7 @@ with tab1:
         y=alt.Y('Difference:Q', title='Difference')
     ).properties(
         width=600,
-        height=200,
+        height=400,
         title="Divergence |True - Approx|"
     )
 
@@ -122,13 +124,14 @@ with tab2:
     chart2 = alt.Chart(df_butterfly).mark_line(strokeWidth=2).encode(
         x=alt.X('Time Step:O', title='Time Step'),
         y=alt.Y('x:Q', title='x'),
-        color=alt.Color('Initial:N', legend=alt.Legend(
-            title="Initial Condition")),
+        color=alt.Color('Model:N',
+                        scale=alt.Scale(range=['#2E86AB', '#F24236']),
+                        legend=alt.Legend(title="Model")),
         strokeDash=alt.StrokeDash(
             'Initial:N', scale=alt.Scale(range=[[1, 0], [5, 5]]))
     ).properties(
         width=600,
-        height=300,
+        height=400,
         title="Butterfly Effect"
     )
 
@@ -145,7 +148,7 @@ with tab2:
         y=alt.Y('Difference:Q', title='Difference')
     ).properties(
         width=600,
-        height=200,
+        height=400,
         title="Divergence |x₀ - (x₀+δ)|"
     )
 
