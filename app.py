@@ -13,6 +13,11 @@ This app shows how:
 - **Butterfly Effect** = small change in initial conditions → large divergence
 """)
 
+# Copyright and link
+st.markdown("""
+© 2024 Jens Laufer | [Solytics.de](https://www.solytics.de/)
+""")
+
 # --- Sidebar ---
 st.sidebar.header("Model Parameters")
 r = st.sidebar.slider("Growth rate (r)", 2.5, 4.0, 3.7, 0.01)
