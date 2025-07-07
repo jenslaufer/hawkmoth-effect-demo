@@ -1,11 +1,11 @@
 version: "3.9"
 
 services:
-  hawkmoth-app:
+  hawkmoth-app-pandas-matplotlib:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: hawkmoth-demo
+    container_name: hawkmoth-demo-pandas-matplotlib
     ports:
       - "8501:8501"
     environment:
