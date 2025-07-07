@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install dependencies
-RUN pip install --no-cache-dir streamlit numpy matplotlib
+RUN pip install --no-cache-dir streamlit polars altair
 
 # Create app directory
 WORKDIR /app

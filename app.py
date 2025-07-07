@@ -1,6 +1,7 @@
 import streamlit as st
-import numpy as np
-import matplotlib.pyplot as plt
+import polars as pl
+import altair as alt
+import math
 
 st.set_page_config(
     page_title="Hawkmoth vs Butterfly Effect", layout="centered")
@@ -38,10 +39,11 @@ def true_model(x, r):
 
 
 def approx_model(x, r, epsilon):
-    return r * x * (1 - x + epsilon * np.sin(np.pi * x))
+    return r * x * (1 - x + epsilon * math.sin(math.pi * x))
 
 
 def simulate(model_func, x0, r, epsilon=0.0, noise=0.0, steps=50):
+    import random
     x = [x0]
     for _ in range(steps):
         last = x[-1]
@@ -51,8 +53,8 @@ def simulate(model_func, x0, r, epsilon=0.0, noise=0.0, steps=50):
             model_func(last, r, epsilon)
         )
         if noise > 0:
-            next_val += np.random.normal(0, noise)
-        next_val = np.clip(next_val, 0, 1)
+            next_val += random.gauss(0, noise)
+        next_val = max(0, min(next_val, 1))
         x.append(next_val)
     return x
 
@@ -66,23 +68,43 @@ with tab1:
     x_approx = simulate(approx_model, x0, r, epsilon=epsilon,
                         noise=noise_level, steps=steps)
 
-    fig1, ax1 = plt.subplots(figsize=(10, 4))
-    ax1.plot(x_true, label="True Model", linewidth=2)
-    ax1.plot(x_approx, label=f"Approx Model (ε={epsilon})", linestyle='--')
-    ax1.set_title("Hawkmoth Effect")
-    ax1.set_xlabel("Time Step")
-    ax1.set_ylabel("x")
-    ax1.grid(True)
-    ax1.legend()
-    st.pyplot(fig1)
+    # Create dataframe for time series
+    df_hawkmoth = pl.DataFrame({
+        'Time Step': list(range(len(x_true))) + list(range(len(x_approx))),
+        'x': x_true + x_approx,
+        'Model': ['True Model'] * len(x_true) + [f'Approx Model (ε={epsilon})'] * len(x_approx)
+    })
 
-    fig1b, ax1b = plt.subplots(figsize=(10, 2.5))
-    ax1b.plot(np.abs(np.array(x_true) - np.array(x_approx)), color='red')
-    ax1b.set_title("Divergence |True - Approx|")
-    ax1b.set_xlabel("Time Step")
-    ax1b.set_ylabel("Difference")
-    ax1b.grid(True)
-    st.pyplot(fig1b)
+    chart1 = alt.Chart(df_hawkmoth).mark_line(strokeWidth=2).encode(
+        x=alt.X('Time Step:O', title='Time Step'),
+        y=alt.Y('x:Q', title='x'),
+        color=alt.Color('Model:N', legend=alt.Legend(title="Model")),
+        strokeDash=alt.StrokeDash(
+            'Model:N', scale=alt.Scale(range=[[1, 0], [5, 5]]))
+    ).properties(
+        width=600,
+        height=300,
+        title="Hawkmoth Effect"
+    )
+
+    st.altair_chart(chart1, use_container_width=True)
+
+    # Divergence plot
+    df_div1 = pl.DataFrame({
+        'Time Step': range(len(x_true)),
+        'Difference': [abs(a - b) for a, b in zip(x_true, x_approx)]
+    })
+
+    chart1b = alt.Chart(df_div1).mark_line(color='red', strokeWidth=2).encode(
+        x=alt.X('Time Step:O', title='Time Step'),
+        y=alt.Y('Difference:Q', title='Difference')
+    ).properties(
+        width=600,
+        height=200,
+        title="Divergence |True - Approx|"
+    )
+
+    st.altair_chart(chart1b, use_container_width=True)
 
 with tab2:
     st.subheader("Butterfly Effect (different initial, same model)")
@@ -90,20 +112,41 @@ with tab2:
     x_shift = simulate(true_model, x0 + delta, r,
                        noise=noise_level, steps=steps)
 
-    fig2, ax2 = plt.subplots(figsize=(10, 4))
-    ax2.plot(x_base, label=f"x₀ = {x0:.3f}", linewidth=2)
-    ax2.plot(x_shift, label=f"x₀ + δ = {x0 + delta:.3f}", linestyle='--')
-    ax2.set_title("Butterfly Effect")
-    ax2.set_xlabel("Time Step")
-    ax2.set_ylabel("x")
-    ax2.grid(True)
-    ax2.legend()
-    st.pyplot(fig2)
+    # Create dataframe for time series
+    df_butterfly = pl.DataFrame({
+        'Time Step': list(range(len(x_base))) + list(range(len(x_shift))),
+        'x': x_base + x_shift,
+        'Initial': [f'x₀ = {x0:.3f}'] * len(x_base) + [f'x₀ + δ = {x0 + delta:.3f}'] * len(x_shift)
+    })
 
-    fig2b, ax2b = plt.subplots(figsize=(10, 2.5))
-    ax2b.plot(np.abs(np.array(x_base) - np.array(x_shift)), color='purple')
-    ax2b.set_title("Divergence |x₀ - (x₀+δ)|")
-    ax2b.set_xlabel("Time Step")
-    ax2b.set_ylabel("Difference")
-    ax2b.grid(True)
-    st.pyplot(fig2b)
+    chart2 = alt.Chart(df_butterfly).mark_line(strokeWidth=2).encode(
+        x=alt.X('Time Step:O', title='Time Step'),
+        y=alt.Y('x:Q', title='x'),
+        color=alt.Color('Initial:N', legend=alt.Legend(
+            title="Initial Condition")),
+        strokeDash=alt.StrokeDash(
+            'Initial:N', scale=alt.Scale(range=[[1, 0], [5, 5]]))
+    ).properties(
+        width=600,
+        height=300,
+        title="Butterfly Effect"
+    )
+
+    st.altair_chart(chart2, use_container_width=True)
+
+    # Divergence plot
+    df_div2 = pl.DataFrame({
+        'Time Step': range(len(x_base)),
+        'Difference': [abs(a - b) for a, b in zip(x_base, x_shift)]
+    })
+
+    chart2b = alt.Chart(df_div2).mark_line(color='purple', strokeWidth=2).encode(
+        x=alt.X('Time Step:O', title='Time Step'),
+        y=alt.Y('Difference:Q', title='Difference')
+    ).properties(
+        width=600,
+        height=200,
+        title="Divergence |x₀ - (x₀+δ)|"
+    )
+
+    st.altair_chart(chart2b, use_container_width=True)
