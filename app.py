@@ -157,8 +157,17 @@ with tab2:
 
 # Footer (outside both tabs so it always shows)
 st.markdown("""
----    
-Made by [@jenslaufer](https://github.com/jenslaufer)
+---
+#### Interested in Dev, AI, Modeling, Uncertainty, Decision Support Tools, or Sports Analytics?
 
-© 2025 — [Solytics GmbH](https://www.solytics.de)
+This demo was created by Jens Laufer from [Solytics GmbH](https://www.solytics.de) — a team passionate about empowering better decisions under uncertainty.
+
+We specialize in:
+
+- Custom analytics and simulation tools  
+- Forecasting, risk modeling, and decision intelligence  
+- Data-driven product development  
+
+👉 [Visit solytics.de](https://www.solytics.de) — we’d love to hear from you.
+
 """)
