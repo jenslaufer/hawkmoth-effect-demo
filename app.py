@@ -160,5 +160,5 @@ st.markdown("""
 ---    
 Made by [@jenslaufer](https://github.com/jenslaufer)
 
-© 2025 Solytics GmbH — [solytics.de](https://www.solytics.de)
+© 2025 — [Solytics GmbH](https://www.solytics.de)
 """)
