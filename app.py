@@ -13,10 +13,6 @@ This app shows how:
 - **Butterfly Effect** = small change in initial conditions → large divergence
 """)
 
-# Copyright and link
-st.markdown("""
-© 2024 Jens Laufer | [Solytics.de](https://www.solytics.de/)
-""")
 
 # --- Sidebar ---
 st.sidebar.header("Model Parameters")
@@ -64,7 +60,7 @@ def simulate(model_func, x0, r, epsilon=0.0, noise=0.0, steps=50):
     return x
 
 
-# --- Tabs for Comparison ---
+    # --- Tabs for Comparison ---
 tab1, tab2 = st.tabs(["🪰 Hawkmoth Effect", "🦋 Butterfly Effect"])
 
 with tab1:
@@ -158,3 +154,11 @@ with tab2:
     )
 
     st.altair_chart(chart2b, use_container_width=True)
+
+# Footer (outside both tabs so it always shows)
+st.markdown("""
+---    
+Made by [@jenslaufer](https://github.com/jenslaufer)
+
+© 2025 Solytics GmbH — [solytics.de](https://www.solytics.de)
+""")

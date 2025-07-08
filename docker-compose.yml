@@ -1,11 +1,8 @@
 version: "3.9"
 
 services:
-  hawkmoth-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: hawkmoth-demo
+  app:
+    build: .
     ports:
       - "8501:8501"
     environment:
